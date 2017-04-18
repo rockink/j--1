@@ -1,5 +1,7 @@
 package jminusminus;
 
+import static jminusminus.CLConstants.GOTO;
+
 /**
  * The AST node for a break-statement.
  */
@@ -32,17 +34,36 @@ public class JBreakStatement extends JStatement{
 		return this;
 	}
 
-	@Override
-	public void codegen(CLEmitter output) {
-		// TODO Auto-generated method stub
 
-	}
+
+
 
 	@Override
 	public void partialCodegen(Context context, CLEmitter partial) {
 		super.partialCodegen(context, partial);
 	}
 
+
+	@Override
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+
+
+		if (jLabelStatement != null){
+			System.out.println("jLabelname " + jLabelStatement.labelName);
+			System.out.println("Breakname " + labelName);
+			System.out.println("outlabel " + jLabelStatement.outLabel);
+		}
+
+
+		//break contains the labelName
+
+		if(jLabelStatement != null && jLabelStatement.labelName.equals(labelName)){
+			output.addBranchInstruction(GOTO, jLabelStatement.outLabel);
+		}else {
+			output.addBranchInstruction(GOTO, label);
+
+		}
+	}
 
 
 	@Override
@@ -53,5 +74,6 @@ public class JBreakStatement extends JStatement{
             p.printf("<JBreakStatement line=\"%d\"/>\n", line());
         }
 	}
+
 
 }

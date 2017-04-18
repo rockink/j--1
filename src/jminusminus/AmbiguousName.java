@@ -54,6 +54,7 @@ class AmbiguousName {
     public AmbiguousName(int line, String name) {
         this.line = line;
         this.name = name;
+
     }
 
     /**

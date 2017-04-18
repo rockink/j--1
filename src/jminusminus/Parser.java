@@ -424,17 +424,20 @@ public class Parser {
      */
 
     public JCompilationUnit compilationUnit() {
+
         int line = scanner.token().line();
         TypeName packageName = null; // Default
         if (have(PACKAGE)) {
             packageName = qualifiedIdentifier();
             mustBe(SEMI);
         }
+
         ArrayList<TypeName> imports = new ArrayList<TypeName>();
         while (have(IMPORT)) {
             imports.add(qualifiedIdentifier());
             mustBe(SEMI);
         }
+
         ArrayList<JAST> typeDeclarations = new ArrayList<JAST>();
         while (!see(EOF)) {
             JAST typeDeclaration = typeDeclaration();
@@ -442,6 +445,7 @@ public class Parser {
                 typeDeclarations.add(typeDeclaration);
             }
         }
+
         mustBe(EOF);
         return new JCompilationUnit(scanner.fileName(), line, packageName,
                 imports, typeDeclarations);

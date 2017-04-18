@@ -56,13 +56,22 @@ class JCastOp extends JExpression {
     public JExpression analyze(Context context) {
         expr = (JExpression) expr.analyze(context);
         type = cast = cast.resolve(context);
+
+        System.out.println("expr " + expr.type().simpleName());
+        System.out.println("type " + type.simpleName());
+
+
         if (cast.equals(expr.type())) {
             converter = Converter.Identity;
         } else if (cast.isJavaAssignableFrom(expr.type())) {
+
+            System.out.println("widening case!! but its not catcing up." );
+
             converter = Converter.WidenReference;
         } else if (expr.type().isJavaAssignableFrom(cast)) {
             converter = new NarrowReference(cast);
         } else if ((converter = conversions.get(expr.type(), cast)) != null) {
+            //TODO WHAT KIND OF CASTING IS HERE??
         } else {
             JAST.compilationUnit.reportSemanticError(line, "Cannot cast a "
                     + expr.type().toString() + " to a " + cast.toString());
@@ -73,14 +82,15 @@ class JCastOp extends JExpression {
     /**
      * Generating code for a cast expression involves generating code for the
      * original expr, and then for any necessary conversion.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        expr.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        expr.codegen(output, null, null);
         converter.codegen(output);
     }
 
@@ -128,6 +138,10 @@ class Conversions {
 
         put(Type.CHAR, Type.INT, Converter.Identity);
         put(Type.INT, Type.CHAR, new I2C());
+        put(Type.INT, Type.DOUBLE, new I2D());
+        put(Type.DOUBLE, Type.INT, new D2I());
+
+
 
         // Boxing
         put(Type.CHAR, Type.BOXED_CHAR, new Boxing(Type.CHAR, Type.BOXED_CHAR));
@@ -344,6 +358,39 @@ class I2C implements Converter {
 
     public void codegen(CLEmitter output) {
         output.addNoArgInstruction(I2C);
+    }
+
+}
+
+/**
+ * Converting from an int to a double requires an I2D instruction.
+ */
+
+class I2D implements Converter {
+
+    /**
+     * @inheritDoc
+     */
+
+    public void codegen(CLEmitter output) {
+        output.addNoArgInstruction(I2D);
+    }
+
+}
+
+
+/**
+ * Converting from an int to a double requires an I2D instruction.
+ */
+
+class D2I implements Converter {
+
+    /**
+     * @inheritDoc
+     */
+
+    public void codegen(CLEmitter output) {
+        output.addNoArgInstruction(D2I);
     }
 
 }

@@ -45,13 +45,14 @@ class JSuper extends JExpression {
 
     /**
      * Load "this" onto the stack (even if we treat it as its super class.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         output.addNoArgInstruction(ALOAD_0);
     }
 

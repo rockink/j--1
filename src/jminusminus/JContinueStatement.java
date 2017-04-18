@@ -32,10 +32,10 @@ public class JContinueStatement extends JStatement{
 	}
 
 	@Override
-	public void codegen(CLEmitter output) {
-		// TODO Auto-generated method stub
-		
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+
 	}
+
 
 	@Override
 	public void writeToStdOut(PrettyPrinter p) {
@@ -45,5 +45,6 @@ public class JContinueStatement extends JStatement{
             p.printf("<JContinueStatement line=\"%d\"/>\n", line());
         }
 	}
+
 
 }

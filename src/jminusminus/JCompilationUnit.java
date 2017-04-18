@@ -180,6 +180,7 @@ class JCompilationUnit extends JAST {
      */
 
     public JAST analyze(Context context) {
+
         for (JAST typeDeclaration : typeDeclarations) {
             typeDeclaration.analyze(this.context);
         }
@@ -189,18 +190,36 @@ class JCompilationUnit extends JAST {
     /**
      * Generating code for a compilation unit means generating code for each of
      * the type declarations.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+
+        ArrayList<JAST> staticBlocks = new ArrayList<>();
         for (JAST typeDeclaration : typeDeclarations) {
-            typeDeclaration.codegen(output);
-            output.write();
-            clFiles.add(output.clFile());
+
+            if(typeDeclaration instanceof JStaticBlock){
+                staticBlocks.add(typeDeclaration);
+            }else {
+
+                //TODO DEFINITELY NO LABEL IN THE MAIN KIND OF!!
+                typeDeclaration.codegen(output, null, null);
+                output.write();
+                clFiles.add(output.clFile());
+            }
         }
+
+
+//        //TODO LETS SEE THIS!!
+//        for(JAST staticBlock : staticBlocks){
+//            staticBlock.codegen(output);
+//            output.write();
+//            clFiles.add(output.clFile());
+//        }
     }
 
     /**

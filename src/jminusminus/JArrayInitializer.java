@@ -69,13 +69,14 @@ class JArrayInitializer
     /**
      * Perform code generation necessary to construct the
      * initializing array and leave it on top of the stack.
-     * 
+     *
      * @param output
      *                the code emitter (basically an abstraction
      *                for producing the .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         Type componentType = type.componentType();
 
         // Code to push array length.
@@ -99,14 +100,16 @@ class JArrayInitializer
             new JLiteralInt(line, String.valueOf(i)).codegen(output);
 
             // Code to compute the initial value.
-            initExpr.codegen(output);
+            initExpr.codegen(output, label, jLabelStatement);
 
             // Code to store the initial value in the array
 	    if (componentType == Type.INT) {
 		output.addNoArgInstruction(IASTORE);
 	    } else if (componentType == Type.BOOLEAN) {
-		output.addNoArgInstruction(BASTORE);
-	    } else if (componentType == Type.CHAR) {
+            output.addNoArgInstruction(BASTORE);
+        } else if (componentType == Type.DOUBLE) {
+            output.addNoArgInstruction(DASTORE);
+        } else if (componentType == Type.CHAR) {
 		output.addNoArgInstruction(CASTORE);
 	    } else if (!componentType.isPrimitive()) {
 		output.addNoArgInstruction(AASTORE);

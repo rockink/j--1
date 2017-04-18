@@ -66,9 +66,20 @@ class JVariableDeclaration extends JStatement {
             // Local variables are declared here (fields are
             // declared
             // in preAnalyze())
+
+
             int offset = ((LocalContext) context).nextOffset();
+
+
             LocalVariableDefn defn = new LocalVariableDefn(decl.type().resolve(
                     context), offset);
+
+
+            if(decl.type().equals(Type.DOUBLE)){
+                offset = ((LocalContext) context).nextOffset();
+                System.out.println("double 2 offsets " + this.getClass().getCanonicalName());
+            }
+
 
             // First, check for shadowing
             IDefn previousDefn = context.lookup(decl.name());
@@ -99,15 +110,16 @@ class JVariableDeclaration extends JStatement {
     /**
      * Local variable initializations (rewritten as assignments in analyze())
      * are generated here.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         for (JStatement initialization : initializations) {
-            initialization.codegen(output);
+            initialization.codegen(output, label, jLabelStatement);
         }
     }
 

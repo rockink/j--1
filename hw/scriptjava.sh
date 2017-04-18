@@ -1,2 +1,2 @@
-javac Test.java
-javap -verbose Test
+javac EnhancedForTest.java
+javap -verbose EnhancedForTest

@@ -1,7 +1,5 @@
 package jminusminus;
 
-import static jminusminus.CLConstants.GOTO;
-
 /**
  * The AST node for a do while-statement.
  */
@@ -41,7 +39,7 @@ public class JDoWhileStatement extends JStatement {
 	}
 
 	@Override
-	public void codegen(CLEmitter output) {
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
 		// TODO Auto-generated method stub
         // Need two labels
         String test = output.createLabel();
@@ -52,7 +50,7 @@ public class JDoWhileStatement extends JStatement {
 
         // Codegen body
         output.addLabel(bodyLabel);
-        body.codegen(output);
+        body.codegen(output,out, null);
 
 
         condition.codegen(output, bodyLabel, true);
@@ -80,5 +78,6 @@ public class JDoWhileStatement extends JStatement {
         p.indentLeft();
         p.printf("</JDoWhileStatement>\n");
 	}
+
 
 }

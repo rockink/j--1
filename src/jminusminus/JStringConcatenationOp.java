@@ -50,13 +50,14 @@ class JStringConcatenationOp extends JBinaryExpression {
      * runtime stack, appending the operands (which might contain nested
      * concatenations; these are handled by cascadingCodegen()), and then for
      * converting the StringBuilder to a String.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Firstly, create a StringBuilder
         output.addReferenceInstruction(NEW, "java/lang/StringBuilder");
         output.addNoArgInstruction(DUP);
@@ -86,7 +87,8 @@ class JStringConcatenationOp extends JBinaryExpression {
             // This appends lhs
             ((JStringConcatenationOp) lhs).nestedCodegen(output);
         } else {
-            lhs.codegen(output);
+            //TODO DOESNT HAVE LABEL
+            lhs.codegen(output, null, null);
             output.addMemberAccessInstruction(INVOKEVIRTUAL,
                     "java/lang/StringBuilder", "append", "("
                             + lhs.type().argumentTypeForAppend()
@@ -98,7 +100,8 @@ class JStringConcatenationOp extends JBinaryExpression {
             // This appends rhs
             ((JStringConcatenationOp) rhs).nestedCodegen(output);
         } else {
-            rhs.codegen(output);
+            //TODO DOESNT HAVE LABEL
+            rhs.codegen(output, null, null);
             output.addMemberAccessInstruction(INVOKEVIRTUAL,
                     "java/lang/StringBuilder", "append", "("
                             + rhs.type().argumentTypeForAppend()

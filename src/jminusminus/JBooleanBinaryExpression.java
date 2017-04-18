@@ -36,13 +36,15 @@ abstract class JBooleanBinaryExpression extends JBinaryExpression {
      * Generate code for the case where we actually want a boolean value (true
      * or false) computed onto the stack, eg for assignment to a boolean
      * variable.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    //TODO LABEL ISNT USED ANYWHERE!!
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         String elseLabel = output.createLabel();
         String endIfLabel = output.createLabel();
         this.codegen(output, elseLabel, false);
@@ -107,9 +109,12 @@ class JEqualOp extends JBooleanBinaryExpression {
      *            should we branch on true?
      */
 
+
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+
+        //TODO LABEL IS NULL, BECAUSE WE DONT NEED IT!!
+        lhs.codegen(output, null, null);
+        rhs.codegen(output, null, null);
         if (lhs.type().isReference()) {
             output.addBranchInstruction(onTrue ? IF_ACMPEQ : IF_ACMPNE,
                     targetLabel);

@@ -44,6 +44,11 @@ class JClassDeclaration extends JAST implements JTypeDecl {
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
 
+    /** Static (class) block of this class. */
+    private ArrayList<JMember> staticBlocks;
+
+
+
     /**
      * Construct an AST node for a class declaration given the line number, list
      * of class modifiers, name of the class, its super class type, list of super
@@ -74,6 +79,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldInitializations = new ArrayList<JFieldDeclaration>();
+        staticBlocks = new ArrayList<>();
     }
 
     /**
@@ -167,6 +173,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
                 : JAST.compilationUnit.packageName() + "/" + name;
         partial.addClass(mods, qualifiedName, superType.jvmName(), null, false);
 
+
         // Pre-analyze the members and add them to the partial
         // class
         for (JMember member : classBlock) {
@@ -175,6 +182,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
                     && ((JConstructorDeclaration) member).params.size() == 0) {
                 hasExplicitConstructor = true;
             }
+
         }
 
         // Add the implicit empty constructor?
@@ -191,6 +199,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         }
     }
 
+
     /**
      * Perform semantic analysis on the class and all of its members within the
      * given context. Analysis includes field initializations and the method
@@ -202,9 +211,15 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      */
 
     public JAST analyze(Context context) {
+
+        ArrayList<JMember> staticBlocks = new ArrayList<>();
+
         // Analyze all members
         for (JMember member : classBlock) {
-            ((JAST) member).analyze(this.context);
+            if (member instanceof  JStaticBlock)
+                staticBlocks.add(member);
+            else
+                ((JAST) member).analyze(this.context);
         }
 
         // Copy declared fields for purposes of initialization.
@@ -217,6 +232,12 @@ class JClassDeclaration extends JAST implements JTypeDecl {
                     instanceFieldInitializations.add(fieldDecl);
                 }
             }
+        }
+
+
+        //check the static block, to make sure that they contain field's context as well
+        for(JMember member : staticBlocks){
+            ((JAST) member).analyze(context);
         }
 
         // Finally, ensure that a non-abstract class has
@@ -236,13 +257,14 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
     /**
      * Generate code for the class declaration.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // The class header
         String qualifiedName = JAST.compilationUnit.packageName() == "" ? name
                 : JAST.compilationUnit.packageName() + "/" + name;
@@ -255,13 +277,51 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
         // The members
         for (JMember member : classBlock) {
-            ((JAST) member).codegen(output);
+            if(member instanceof JStaticBlock){
+                staticBlocks.add(member);
+                System.out.println("static block adding");
+            }else {
+
+                //TODO NULL, BECAUSE CLASS DELCARATION WONT HAVE BREAK STATEMENT
+                ((JAST) member).codegen(output, null, null);
+
+
+
+            }
         }
+
+//        codeGenStaticInit(output);
 
         // Generate a class initialization method?
         if (staticFieldInitializations.size() > 0) {
             codegenClassInit(output);
         }
+    }
+
+    /**
+     * Generates codegen for static block, would be similar in a way as instance block i assume
+     * @param output
+     */
+    private void codeGenStaticInit(CLEmitter output) {
+
+        System.out.println("codegen static running again ");
+
+        ArrayList<String> mods = new ArrayList<String>();
+        mods.add("public");
+        mods.add("static");
+        output.addMethod(mods, "<clinit>", "()V", null, false);
+
+        // If there are instance initializations, generate code
+        // for them
+        for (JMember staticBlock : staticBlocks) {
+            System.out.println("static block");
+            //TODO NEITHER DO STATIC BLOCKS HAVE BREAK
+            ((JAST)staticBlock).codegen(output, null, null);
+        }
+
+        // Return
+        output.addNoArgInstruction(RETURN);
+
     }
 
     /**
@@ -347,7 +407,8 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         // If there are instance field initializations, generate
         // code for them
         for (JFieldDeclaration instanceField : instanceFieldInitializations) {
-            instanceField.codegenInitializations(output);
+            //TODO THIS IS NOT NULL?
+            instanceField.codegenInitializations(output, null);
         }
 
         // Return
@@ -369,11 +430,21 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         mods.add("static");
         output.addMethod(mods, "<clinit>", "()V", null, false);
 
+
         // If there are instance initializations, generate code
         // for them
         for (JFieldDeclaration staticField : staticFieldInitializations) {
-            staticField.codegenInitializations(output);
+            //TODO STATIC FILED NULL??
+            staticField.codegenInitializations(output, null);
         }
+
+
+        //so may be this is a place for block initialization too!
+        for (JMember staticBlock : staticBlocks){
+            //TODO STATIC BLOCKS DONT HAVE LABEL
+            ((JAST)staticBlock).codegen(output, null, null);
+        }
+
 
         // Return
         output.addNoArgInstruction(RETURN);

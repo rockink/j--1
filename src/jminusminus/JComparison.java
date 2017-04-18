@@ -88,8 +88,8 @@ class JGreaterThanOp extends JComparison {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+        lhs.codegen(output, null, null);
+        rhs.codegen(output, null, null);
 
         if(lhs.type().equals(Type.INT)) {
             output
@@ -145,8 +145,8 @@ class JLessThanOp extends JComparison {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+        lhs.codegen(output, null, null);
+        rhs.codegen(output, null, null);
 
         if(lhs.type().equals(Type.INT)) {
             output
@@ -202,8 +202,8 @@ class JLessEqualOp extends JComparison {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+        lhs.codegen(output, null, null);
+        rhs.codegen(output, null, null);
 
 
         if(lhs.type().equals(Type.INT)) {
@@ -262,8 +262,8 @@ class JGreaterEqualOp extends JComparison {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+        lhs.codegen(output, null, null);
+        rhs.codegen(output, null, null);
 
 
         if(lhs.type().equals(Type.INT)) {

@@ -39,13 +39,14 @@ class JThis extends JExpression {
 
     /**
      * Simply generate code to load "this" onto the stack.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         output.addNoArgInstruction(ALOAD_0);
     }
 

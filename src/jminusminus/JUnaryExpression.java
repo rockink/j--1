@@ -94,14 +94,15 @@ class JNegateOp extends JUnaryExpression {
     /**
      * Generating code for the negation operation involves generating code for
      * the operand, and then the negation instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        arg.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        arg.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(type.equals(Type.INT) ? INEG : DNEG);
     }
 
@@ -148,14 +149,15 @@ class JUnaryPlusOp extends JUnaryExpression {
     /**
      * Generating code for the UnaryPlus operation involves generating code for
      * the operand, and then the result of UnaryPlus is the operand itself
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        arg.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        arg.codegen(output, label, jLabelStatement);
     }
 
 }
@@ -200,13 +202,14 @@ class JLogicalNotOp extends JUnaryExpression {
      * Generate code for the case where we actually want a boolean value (true
      * or false) computed onto the stack, eg for assignment to a boolean
      * variable.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         String elseLabel = output.createLabel();
         String endIfLabel = output.createLabel();
         this.codegen(output, elseLabel, false);
@@ -282,13 +285,14 @@ class JPostDecrementOp extends JUnaryExpression {
      * expressions that are statement expressions and those that are not; we
      * insure the proper value (before the decrement) is left atop the stack in
      * the latter case.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (arg instanceof JVariable) {
             // A local variable; otherwise analyze() would
             // have replaced it with an explicit field selection.
@@ -296,7 +300,7 @@ class JPostDecrementOp extends JUnaryExpression {
                     .offset();
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                arg.codegen(output);
+                arg.codegen(output, label, jLabelStatement);
             }
 
 
@@ -306,11 +310,11 @@ class JPostDecrementOp extends JUnaryExpression {
             }
 
         } else {
-            ((JLhs) arg).codegenLoadLhsLvalue(output);
-            ((JLhs) arg).codegenLoadLhsRvalue(output);
+            ((JLhs) arg).codegenLoadLhsLvalue(output, label, jLabelStatement);;
+            ((JLhs) arg).codegenLoadLhsRvalue(output, label, jLabelStatement);
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                ((JLhs) arg).codegenDuplicateRvalue(output);
+                ((JLhs) arg).codegenDuplicateRvalue(output, label);
             }
             if (type.equals(Type.INT)) {
                 output.addNoArgInstruction(ICONST_1);
@@ -375,13 +379,14 @@ class JPostIncrementOp extends JUnaryExpression {
      * expressions that are statement expressions and those that are not; we
      * insure the proper value (before the decrement) is left atop the stack in
      * the latter case.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (arg instanceof JVariable) {
             // A local variable; otherwise analyze() would
             // have replaced it with an explicit field selection.
@@ -389,7 +394,7 @@ class JPostIncrementOp extends JUnaryExpression {
                     .offset();
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                arg.codegen(output);
+                arg.codegen(output, label, jLabelStatement);
             }
 
             if(type.equals(Type.INT))
@@ -398,7 +403,7 @@ class JPostIncrementOp extends JUnaryExpression {
 
                 //TODO CHECK THIS OUT LATER!
             if(type.equals(Type.DOUBLE)){
-                arg.codegen(output);
+                arg.codegen(output, label, jLabelStatement);
                 output.addNoArgInstruction(DCONST_1);
                 output.addNoArgInstruction(DADD);
                 ((JVariable) arg).codegenStore(output);
@@ -407,11 +412,11 @@ class JPostIncrementOp extends JUnaryExpression {
 
             }
         } else {
-            ((JLhs) arg).codegenLoadLhsLvalue(output);
-            ((JLhs) arg).codegenLoadLhsRvalue(output);
+            ((JLhs) arg).codegenLoadLhsLvalue(output, label, jLabelStatement);;
+            ((JLhs) arg).codegenLoadLhsRvalue(output, label, jLabelStatement);
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                ((JLhs) arg).codegenDuplicateRvalue(output);
+                ((JLhs) arg).codegenDuplicateRvalue(output, label);
             }
             if (type.equals(Type.INT)) {
                 output.addNoArgInstruction(ICONST_1);
@@ -477,13 +482,14 @@ class JPreIncrementOp extends JUnaryExpression {
      * expressions that are statement expressions and those that are not; we
      * insure the proper value (after the increment) is left atop the stack in
      * the latter case.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (arg instanceof JVariable) {
             // A local variable; otherwise analyze() would
             // have replaced it with an explicit field selection.
@@ -492,11 +498,11 @@ class JPreIncrementOp extends JUnaryExpression {
             output.addIINCInstruction(offset, 1);
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                arg.codegen(output);
+                arg.codegen(output, label, jLabelStatement);
             }
         } else {
-            ((JLhs) arg).codegenLoadLhsLvalue(output);
-            ((JLhs) arg).codegenLoadLhsRvalue(output);
+            ((JLhs) arg).codegenLoadLhsLvalue(output, label, jLabelStatement);;
+            ((JLhs) arg).codegenLoadLhsRvalue(output, label, jLabelStatement);
 
             if(type.equals(Type.INT)){
                 output.addNoArgInstruction(ICONST_1);
@@ -508,7 +514,7 @@ class JPreIncrementOp extends JUnaryExpression {
 
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                ((JLhs) arg).codegenDuplicateRvalue(output);
+                ((JLhs) arg).codegenDuplicateRvalue(output, label);
             }
             ((JLhs) arg).codegenStore(output);
         }
@@ -567,13 +573,14 @@ class JPreDecrementOp extends JUnaryExpression {
      * expressions that are statement expressions and those that are not; we
      * insure the proper value (after the decrement) is left atop the stack in
      * the latter case.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (arg instanceof JVariable) {
             // A local variable; otherwise analyze() would
             // have replaced it with an explicit field selection.
@@ -582,11 +589,11 @@ class JPreDecrementOp extends JUnaryExpression {
             output.addIINCInstruction(offset, 1);
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                arg.codegen(output);
+                arg.codegen(output, label, jLabelStatement);
             }
         } else {
-            ((JLhs) arg).codegenLoadLhsLvalue(output);
-            ((JLhs) arg).codegenLoadLhsRvalue(output);
+            ((JLhs) arg).codegenLoadLhsLvalue(output, label, jLabelStatement);;
+            ((JLhs) arg).codegenLoadLhsRvalue(output, label, jLabelStatement);
 
             if (type.equals(Type.INT)){
                 output.addNoArgInstruction(ICONST_1);
@@ -598,7 +605,7 @@ class JPreDecrementOp extends JUnaryExpression {
 
             if (!isStatementExpression) {
                 // Loading its original rvalue
-                ((JLhs) arg).codegenDuplicateRvalue(output);
+                ((JLhs) arg).codegenDuplicateRvalue(output, label);
             }
             ((JLhs) arg).codegenStore(output);
         }

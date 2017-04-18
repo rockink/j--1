@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 /**
  * The AST node for a block, which delimits a nested level of scope.
+ *
  */
-
 class JBlock extends JStatement {
 
     /** List of statements forming the block body. */
@@ -66,16 +66,20 @@ class JBlock extends JStatement {
     /**
      * Generating code for a block consists of generating code for each of its
      * statements.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
 
-        for (JStatement statement : statements) {
-            statement.codegen(output);
+        //this involves tracking down the label, and then generating code to going after that label...
+        for (int i = 0; i < statements.size(); i++) {
+            JStatement statement = statements.get(i);
+            System.out.println(statement.getClass().getSimpleName() + " line " + statement.line);
+            statement.codegen(output, label, jLabelStatement);
         }
     }
 
@@ -97,5 +101,6 @@ class JBlock extends JStatement {
         }
         p.printf("</JBlock>\n");
     }
+
 
 }

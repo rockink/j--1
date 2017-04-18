@@ -10,11 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.DataOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
+import java.util.*;
+
 import static jminusminus.CLConstants.*;
 import static jminusminus.CLConstants.Category.*;
 
@@ -241,6 +238,14 @@ public class CLEmitter {
                 if (instr instanceof CLFlowControlInstruction) {
                     if (!((CLFlowControlInstruction) instr)
                             .resolveLabels(mLabels)) {
+
+                        Set<Map.Entry<String, Integer>> set = mLabels.entrySet();
+
+                        //TODO REMOVE
+                        for(Map.Entry<String, Integer> entry : set){
+                            System.out.println("labels KV" + entry.getKey() +"  val " + entry.getValue());
+                        }
+
                         reportEmitterError(
                                 "%s: Unable to resolve jump label(s)",
                                 eCurrentMethod);

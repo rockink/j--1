@@ -56,16 +56,17 @@ class JNewArrayOp extends JExpression {
     /**
      * Generate code to push the bounds on the stack and then generate the
      * appropriate array creation instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Code to push diemension exprs on to the stack
         for (JExpression dimExpr : dimExprs) {
-            dimExpr.codegen(output);
+            dimExpr.codegen(output, label, jLabelStatement);
         }
 
         // Generate the appropriate array creation instruction

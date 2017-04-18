@@ -46,14 +46,15 @@ class JStatementExpression extends JStatement {
     /**
      * Generating code for the statement expression involves simply generating
      * code for the encapsulated expression.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        expr.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        expr.codegen(output, label, jLabelStatement);
     }
 
     /**
@@ -67,5 +68,6 @@ class JStatementExpression extends JStatement {
         p.indentLeft();
         p.printf("</JStatementExpression>\n");
     }
+
 
 }

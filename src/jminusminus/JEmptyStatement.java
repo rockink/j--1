@@ -21,6 +21,7 @@ class JEmptyStatement extends JStatement {
         super(line);
     }
 
+
     /**
      * @inheritDoc
      */
@@ -28,6 +29,13 @@ class JEmptyStatement extends JStatement {
     public JAST analyze(Context context) {
         // Nothing to do.
         return this;
+    }
+
+
+    //TODO nothing to do??
+    @Override
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+
     }
 
     /**

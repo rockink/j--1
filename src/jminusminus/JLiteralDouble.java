@@ -40,6 +40,11 @@ class JLiteralDouble extends JExpression {
         return this;
     }
 
+    @Override
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        codegen(output);
+    }
+
     /**
      * Generating code for an double literal means generating code to push it onto
      * the stack.

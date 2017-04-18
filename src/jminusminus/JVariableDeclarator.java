@@ -111,13 +111,14 @@ class JVariableDeclarator extends JAST {
 
     /**
      * No code generation is done here.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // No code generation here -- possibly up the tree
         // (for initializations).
     }

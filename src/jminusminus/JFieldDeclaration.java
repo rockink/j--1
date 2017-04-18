@@ -108,21 +108,23 @@ class JFieldDeclaration extends JAST implements JMember {
      *            .class file).
      */
 
-    public void codegenInitializations(CLEmitter output) {
+    public void codegenInitializations(CLEmitter output, String label) {
         for (JStatement initialization : initializations) {
-            initialization.codegen(output);
+            //TODO not really right? fields don't have break labels
+            initialization.codegen(output, null, null);
         }
     }
 
     /**
      * Code generation for field declaration involves generate field the header.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         for (JVariableDeclarator decl : decls) {
             // Add field to class
             output.addField(mods, decl.name(), decl.type().toDescriptor(),

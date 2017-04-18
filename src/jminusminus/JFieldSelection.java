@@ -148,14 +148,16 @@ class JFieldSelection extends JExpression implements JLhs {
 
     /**
      * Generate the code necessary to load the Rvalue for this field selection.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        target.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        //TODO FIELD DOESNT HAVE BREAK LABEL EITHER!
+        target.codegen(output, label, jLabelStatement);
 
         // We use a workaround for the "length" field of arrays
         if ((target.type().isArray()) && fieldName.equals("length")) {
@@ -182,7 +184,8 @@ class JFieldSelection extends JExpression implements JLhs {
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
         // Push the value
-        codegen(output);
+        //TODO field doesnt have label
+        codegen(output, null, null);
 
         if (onTrue) {
             // Branch on true
@@ -202,11 +205,12 @@ class JFieldSelection extends JExpression implements JLhs {
      *            .class file).
      */
 
-    public void codegenLoadLhsLvalue(CLEmitter output) {
+    public void codegenLoadLhsLvalue(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Nothing to do for static fields.
         if (!field.isStatic()) {
             // Just load the target
-            target.codegen(output);
+            //todo might have
+            target.codegen(output, label, jLabelStatement);
         }
     }
 
@@ -219,7 +223,7 @@ class JFieldSelection extends JExpression implements JLhs {
      *            .class file).
      */
 
-    public void codegenLoadLhsRvalue(CLEmitter output) {
+    public void codegenLoadLhsRvalue(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         String descriptor = field.type().toDescriptor();
         if (field.isStatic()) {
             output.addMemberAccessInstruction(GETSTATIC, target.type()
@@ -241,7 +245,7 @@ class JFieldSelection extends JExpression implements JLhs {
      *            .class file).
      */
 
-    public void codegenDuplicateRvalue(CLEmitter output) {
+    public void codegenDuplicateRvalue(CLEmitter output, String label) {
         if (field.isStatic()) {
             output.addNoArgInstruction(DUP);
         } else {

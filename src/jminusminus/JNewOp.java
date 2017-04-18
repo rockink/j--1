@@ -89,17 +89,19 @@ class JNewOp extends JExpression {
      * instruction for creating the object on the stack, then gnerating the code
      * for the actual arguments, and then code for invoking the constructor (the
      * initialization method).
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    //TODO THEY DONT USE LABEL
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         output.addReferenceInstruction(NEW, type.jvmName());
         output.addNoArgInstruction(DUP);
         for (JExpression argument : arguments) {
-            argument.codegen(output);
+            argument.codegen(output, label, jLabelStatement);
         }
         output.addMemberAccessInstruction(INVOKESPECIAL, type.jvmName(),
                 "<init>", constructor.toDescriptor());

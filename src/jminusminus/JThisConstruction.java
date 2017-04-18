@@ -95,16 +95,17 @@ class JThisConstruction extends JExpression {
     /**
      * Code generation involves generating the code for loading the actual
      * arguments onto the stack, and then for invoking this constructor.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         output.addNoArgInstruction(ALOAD_0); // this
         for (JExpression argument : arguments) {
-            argument.codegen(output);
+            argument.codegen(output, label, jLabelStatement);
         }
         output.addMemberAccessInstruction(INVOKESPECIAL, constructor
                 .declaringType().jvmName(), "<init>", constructor

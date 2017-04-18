@@ -79,7 +79,7 @@ public class JInterfaceDeclaration extends JAST implements JTypeDecl {
 	}
 
 	@Override
-	public void codegen(CLEmitter output) {
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -2,9 +2,6 @@ package jminusminus;
 
 import java.util.ArrayList;
 
-import static jminusminus.CLConstants.GOTO;
-import static jminusminus.TokenKind.SEMI;
-
 /**
  * The AST node for a Basic For Statement.
  */
@@ -27,8 +24,9 @@ public class JForBasicStatement extends JStatement {
 	protected JStatement body;
 
 	private boolean forInitDeclared = false;
-	
-	 /**
+	private JBlock forBlock;
+
+	/**
      * Construct an AST node for a basic for statement given its line number, the
      * forInit Statements or forInit Declarations, test expression,
      * forUpdate Statements and the basic for body.
@@ -58,6 +56,7 @@ public class JForBasicStatement extends JStatement {
 		this.body = body;
 	}
 
+
 	@Override
 	public JAST analyze(Context context) {
 
@@ -72,10 +71,8 @@ public class JForBasicStatement extends JStatement {
 			ArrayList<String> mods = new ArrayList<String>();
 			for(int i = 0; i < forInitDeclarations.size(); i++){
 				forInitDeclarations.set(i, (JVariableDeclarator) forInitDeclarations.get(i));
-                        //.analyze(context));
 			}
 			jStatements.add(new JVariableDeclaration(line, mods, forInitDeclarations));
-                    //.analyze(context));
 		}
 
 
@@ -91,9 +88,8 @@ public class JForBasicStatement extends JStatement {
 		JStatement whileBody = new JBlock(line, bodyBlock);
 		JWhileStatement whileStatement = new JWhileStatement(line, condition, whileBody);
 		jStatements.add(whileStatement); //.analyze(context));
-
-		return  new JBlock(line, jStatements).analyze(context);
-
+		this.forBlock = new JBlock(line, jStatements).analyze(context);
+		return forBlock;
 	}
 
 
@@ -106,46 +102,13 @@ public class JForBasicStatement extends JStatement {
 	 *
 	 * @param output
 	 *            the code emitter (basically an abstraction for producing the
+	 * @param jLabelStatement
 	 */
 	@Override
-	public void codegen(CLEmitter output) {
-//		// TODO Auto-generated method stub
-//		String forInit = output.createLabel();
-//		String test = output.createLabel();
-//		String update = output.createLabel();
-//		String bodyLabels = output.createLabel();
-//		String out = output.createLabel();
-//		output.addLabel(forInit);
-//
-//		if(forInitDeclared) {
-//			for (int i = 0; i < forInitDeclarations.size(); i++) {
-//				forInitDeclarations.get(i).codegen(output);
-//			}
-//		}
-//		if (forInitStatements!=null){
-//			for (int i = 0; i < forInitStatements.size(); i++) {
-//				forInitStatements.get(i).codegen(output);
-//			}
-//		}
-//
-//		if(condition != null) {
-//			output.addLabel(test);
-//			condition.codegen(output, out, false);
-//		}
-//
-//		if(forUpdate!=null) {
-//			output.addLabel(update);
-//			for (int i = 0; i < forUpdate.size(); i++) {
-//				forUpdate.get(i).codegen(output);
-//			}
-//		}
-//
-//		body.codegen(output);
-//
-//		output.addBranchInstruction(GOTO, test);
-//		if(condition != null)
-//			output.addLabel(out);
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
 
+		System.out.println("JforCodegen");
+		forBlock.codegen(output, label, jLabelStatement);
 	}
 
 	@Override
@@ -199,5 +162,6 @@ public class JForBasicStatement extends JStatement {
         p.indentLeft();
         p.printf("</JForBasicStatement>\n");
 	}
+
 
 }

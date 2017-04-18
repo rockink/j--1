@@ -1,2 +1,2 @@
-../bin/j-- Test.java
-javap -verbose Test
+../bin/j-- EnhancedForTest.java
+javap -verbose EnhancedForTest

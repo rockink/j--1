@@ -94,14 +94,15 @@ class JAssignOp extends JAssignment {
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output,label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         if (!isStatementExpression) {
             // Generate code to leave the Rvalue atop stack
-            ((JLhs) lhs).codegenDuplicateRvalue(output);
+            ((JLhs) lhs).codegenDuplicateRvalue(output, label);
         }
         ((JLhs) lhs).codegenStore(output);
     }
@@ -177,20 +178,21 @@ class JPlusAssignOp extends JAssignment {
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output,label, jLabelStatement);
         if (lhs.type().equals(Type.STRING)) {
-            rhs.codegen(output);
+            rhs.codegen(output, label, jLabelStatement);
         } else {
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            rhs.codegen(output);
+            ((JLhs) lhs).codegenLoadLhsRvalue(output,label, jLabelStatement);
+            rhs.codegen(output, label, jLabelStatement);
             output.addNoArgInstruction(type.equals(Type.INT) ? IADD : DADD);
         }
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
-            ((JLhs) lhs).codegenDuplicateRvalue(output);
+            ((JLhs) lhs).codegenDuplicateRvalue(output, label);
         }
         ((JLhs) lhs).codegenStore(output);
     }
@@ -263,17 +265,18 @@ class JMinusAssignOp extends JAssignment {
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output,label, jLabelStatement);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output,label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(lhs.type().equals(Type.INT) ? ISUB : DSUB);
 
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
-            ((JLhs) lhs).codegenDuplicateRvalue(output);
+            ((JLhs) lhs).codegenDuplicateRvalue(output, label);
         }
         ((JLhs) lhs).codegenStore(output);
 
@@ -348,17 +351,18 @@ class JStarAssignOp extends JAssignment {
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output,label, jLabelStatement);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output,label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(lhs.type().equals(Type.INT) ? IMUL : DMUL);
 
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
-            ((JLhs) lhs).codegenDuplicateRvalue(output);
+            ((JLhs) lhs).codegenDuplicateRvalue(output, label);
         }
         ((JLhs) lhs).codegenStore(output);
 
@@ -406,7 +410,10 @@ class JDivAssignOp extends JAssignment {
         } else {
             lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
         }
+
         rhs = (JExpression) rhs.analyze(context);
+        //TODO REMOVE THIS
+        System.out.println("LHS TYPE " + lhs.type());
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
@@ -432,17 +439,18 @@ class JDivAssignOp extends JAssignment {
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output,label, jLabelStatement);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output,label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(lhs.type().equals(Type.INT) ? IDIV : DDIV);
 
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
-            ((JLhs) lhs).codegenDuplicateRvalue(output);
+            ((JLhs) lhs).codegenDuplicateRvalue(output, label);
         }
         ((JLhs) lhs).codegenStore(output);
 
@@ -516,17 +524,18 @@ class JModAssignOp extends JAssignment {
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output,label,jLabelStatement);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output,label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(lhs.type().equals(Type.INT) ? IREM: DREM);
 
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
-            ((JLhs) lhs).codegenDuplicateRvalue(output);
+            ((JLhs) lhs).codegenDuplicateRvalue(output, label);
         }
         ((JLhs) lhs).codegenStore(output);
 

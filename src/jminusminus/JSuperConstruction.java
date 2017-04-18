@@ -101,16 +101,17 @@ class JSuperConstruction extends JExpression {
     /**
      * Code generation involves generating code to load the actual arguments
      * onto the stack, and then the code for invoking the constructor.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         output.addNoArgInstruction(ALOAD_0); // this
         for (JExpression argument : arguments) {
-            argument.codegen(output);
+            argument.codegen(output, label, jLabelStatement);
         }
         output.addMemberAccessInstruction(INVOKESPECIAL, constructor
                 .declaringType().jvmName(), "<init>", constructor

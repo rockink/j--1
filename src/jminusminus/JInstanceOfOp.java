@@ -74,14 +74,15 @@ class JInstanceOfOp
 
     /**
      * Generate code for the type test.
-     * 
+     *
      * @param output
      *                the code emitter (basically an abstraction
      *                for producing the .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        expr.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        expr.codegen(output, label, jLabelStatement);
         output.addReferenceInstruction(INSTANCEOF, typeSpec
             .toDescriptor());
     }
@@ -98,14 +99,16 @@ class JInstanceOfOp
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-	codegen(output);
-	if (onTrue) {
-	    // Branch on true
-	    output.addBranchInstruction(IFNE, targetLabel);
-	} else {
-	    // Branch on false
-	    output.addBranchInstruction(IFEQ, targetLabel);
-	}
+
+        //TODO NOT SURE HOW TO DO IT
+    	codegen(output, null, null);
+        if (onTrue) {
+            // Branch on true
+            output.addBranchInstruction(IFNE, targetLabel);
+        } else {
+            // Branch on false
+            output.addBranchInstruction(IFEQ, targetLabel);
+        }
     }
 
     /**

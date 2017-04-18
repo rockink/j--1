@@ -110,7 +110,9 @@ class JPlusOp extends JBinaryExpression {
                     .analyze(context);
         } else if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
             type = Type.INT;
-        } else {
+        } else if (lhs.type() == Type.DOUBLE){
+            type = Type.DOUBLE;
+        }else {
             type = Type.ANY;
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid operand types for +");
@@ -123,17 +125,18 @@ class JPlusOp extends JBinaryExpression {
      * (in analyze()), so code generation here involves simply generating code
      * for loading the operands onto the stack and then generating the
      * appropriate add instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        if (type == Type.INT) {
-            lhs.codegen(output);
-            rhs.codegen(output);
-            output.addNoArgInstruction(IADD);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        if (type == Type.INT || type == Type.DOUBLE) {
+            lhs.codegen(output, label, jLabelStatement);
+            rhs.codegen(output, label, jLabelStatement);
+            output.addNoArgInstruction(type == Type.INT ? IADD : DADD);
         }
     }
 
@@ -183,15 +186,16 @@ class JSubtractOp extends JBinaryExpression {
     /**
      * Generating code for the - operation involves generating code for the two
      * operands, and then the subtraction instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(ISUB);
     }
 
@@ -241,15 +245,16 @@ class JMultiplyOp extends JBinaryExpression {
     /**
      * Generating code for the * operation involves generating code for the two
      * operands, and then the multiplication instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(IMUL);
     }
 
@@ -299,15 +304,16 @@ class JDivideOp extends JBinaryExpression {
     /**
      * Generating code for the / operation involves generating code for the two
      * operands, and then the division instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(IDIV);
     }
 
@@ -357,15 +363,16 @@ class JModuloOp extends JBinaryExpression {
     /**
      * Generating code for the % operation involves generating code for the two
      * operands, and then the modulus instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(IREM);
     }
 
@@ -415,15 +422,16 @@ class JBitwiseOrOp extends JBinaryExpression {
     /**
      * Generating code for the | operation involves generating code for the two
      * operands, and then the BitwiseOr instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(IOR);
     }
 
@@ -473,15 +481,16 @@ class JBitwiseExclusiveOrOp extends JBinaryExpression {
     /**
      * Generating code for the ^ operation involves generating code for the two
      * operands, and then the BitwiseExclusiveOr instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(IXOR);
     }
 
@@ -531,15 +540,16 @@ class JBitwiseAndOp extends JBinaryExpression {
     /**
      * Generating code for the & operation involves generating code for the two
      * operands, and then the BitwiseAnd instruction.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        lhs.codegen(output, label, jLabelStatement);
+        rhs.codegen(output, label, jLabelStatement);
         output.addNoArgInstruction(IAND);
     }
 

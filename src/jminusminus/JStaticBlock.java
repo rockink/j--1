@@ -22,19 +22,25 @@ public class JStaticBlock extends JAST implements JMember {
 		super(line);
 		this.block = body;
 	}
-	
+
+
+	//here we test the stuff like return and all
 	public void preAnalyze(Context context, CLEmitter partial) {
-		
-	}
-	
-	public JAST analyze(Context context) {
-		
-		return null;
+
+    }
+
+
+	@Override
+	public void partialCodegen(Context context, CLEmitter partial) {
+		super.partialCodegen(context, partial);
 	}
 
-	public void codegen(CLEmitter output) {
-		
-		
+	public JAST analyze(Context context) {
+		return block.analyze(context);
+	}
+
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+		block.codegen(output, label, jLabelStatement);
 	}
 
 	public void writeToStdOut(PrettyPrinter p) {

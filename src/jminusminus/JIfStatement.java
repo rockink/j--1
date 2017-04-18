@@ -64,23 +64,24 @@ class JIfStatement extends JStatement {
      * Code generation for an if-statement. We generate code to branch over the
      * consequent if !test; the consequent is followed by an unconditonal branch
      * over (any) alternate.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         String elseLabel = output.createLabel();
         String endLabel = output.createLabel();
         condition.codegen(output, elseLabel, false);
-        thenPart.codegen(output);
+        thenPart.codegen(output, label, jLabelStatement);
         if (elsePart != null) {
             output.addBranchInstruction(GOTO, endLabel);
         }
         output.addLabel(elseLabel);
         if (elsePart != null) {
-            elsePart.codegen(output);
+            elsePart.codegen(output, label, jLabelStatement);
             output.addLabel(endLabel);
         }
     }
@@ -112,5 +113,6 @@ class JIfStatement extends JStatement {
         p.indentLeft();
         p.printf("</JIfStatement>\n");
     }
+
 
 }

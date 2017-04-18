@@ -120,13 +120,14 @@ class JVariable extends JExpression implements JLhs {
 
     /**
      * Generate code to load value of variable on stack.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (iDefn instanceof LocalVariableDefn) {
             int offset = ((LocalVariableDefn) iDefn).offset();
             if (type.isReference()) {
@@ -169,7 +170,19 @@ class JVariable extends JExpression implements JLhs {
                         break;
                     }
                 }else if (type == Type.DOUBLE){
-                    output.addOneArgInstruction(DLOAD, offset);
+
+                    if(offset == 0){
+                        output.addNoArgInstruction(DLOAD_0);
+                    }else if(offset == 1){
+                        output.addNoArgInstruction(DLOAD_1);
+                    }else if (offset == 2){
+                        output.addNoArgInstruction(DLOAD_2);
+                    }else  if (offset == 3){
+                        output.addNoArgInstruction(DLOAD_3);
+                    }else {
+
+                        output.addOneArgInstruction(DLOAD, offset);
+                    }
                 }
             }
         }
@@ -191,7 +204,8 @@ class JVariable extends JExpression implements JLhs {
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
         if (iDefn instanceof LocalVariableDefn) {
             // Push the value
-            codegen(output);
+            //TODO VARIABLES DONT HAVE BREAK
+            codegen(output, null, null);
 
             if (onTrue) {
                 // Branch on true
@@ -212,7 +226,7 @@ class JVariable extends JExpression implements JLhs {
      *            the emitter (an abstraction of the class file.
      */
 
-    public void codegenLoadLhsLvalue(CLEmitter output) {
+    public void codegenLoadLhsLvalue(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Nothing goes here.
     }
 
@@ -224,8 +238,8 @@ class JVariable extends JExpression implements JLhs {
      *            the emitter (an abstraction of the class file).
      */
 
-    public void codegenLoadLhsRvalue(CLEmitter output) {
-        codegen(output);
+    public void codegenLoadLhsRvalue(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        codegen(output, label, jLabelStatement);
     }
 
     /**
@@ -239,7 +253,7 @@ class JVariable extends JExpression implements JLhs {
      *            .class file).
      */
 
-    public void codegenDuplicateRvalue(CLEmitter output) {
+    public void codegenDuplicateRvalue(CLEmitter output, String label) {
         if (iDefn instanceof LocalVariableDefn) {
             // It's copied atop the stack.
             output.addNoArgInstruction(DUP);
@@ -299,8 +313,19 @@ class JVariable extends JExpression implements JLhs {
                     }
                 }else if (type == Type.DOUBLE){
 
-                    output.addOneArgInstruction(DSTORE, offset);
+                    if(offset == 0){
+                        output.addNoArgInstruction(DSTORE_0);
+                    }else if(offset == 1){
+                        output.addNoArgInstruction(DSTORE_1);
+                    }else if (offset == 2){
+                        output.addNoArgInstruction(DSTORE_2);
+                    }else  if (offset == 3){
+                        output.addNoArgInstruction(DSTORE_3);
+                    }else {
 
+                        output.addOneArgInstruction(DSTORE, offset);
+
+                    }
                 }
             }
         }

@@ -149,9 +149,19 @@ class JMethodDeclaration
         // Declare the parameters. We consider a formal parameter 
         // to be always initialized, via a function call.
         for (JFormalParameter param : params) {
-            LocalVariableDefn defn = new LocalVariableDefn(param.type(), 
-                this.context.nextOffset());
+
+
+            int offset = this.context.nextOffset();
+
+            LocalVariableDefn defn = new LocalVariableDefn(param.type(),
+                offset);
+
             defn.initialize();
+
+            if(param.type().equals(Type.DOUBLE)){
+                this.context.nextOffset();
+            }
+
             this.context.addEntry(param.line(), param.name(), defn);
         }
         if (body != null) {
@@ -163,6 +173,7 @@ class JMethodDeclaration
         }
 	return this;
     }
+
 
     /**
      * Add this method declaration to the partial class.
@@ -194,6 +205,12 @@ class JMethodDeclaration
         }
     }
 
+    //TODO CAUSE METHOD DOESN'T HAVE BREAKS
+    @Override
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        codegen(output);
+    }
+
     /**
      * Generate code for the method declaration.
      * 
@@ -205,7 +222,8 @@ class JMethodDeclaration
     public void codegen(CLEmitter output) {
         output.addMethod(mods, name, descriptor, null, false);
         if (body != null) {
-            body.codegen(output);
+            //TODO DOESNT HAVE LABEL
+            body.codegen(output, null, null);
         }
 
         // Add implicit RETURN

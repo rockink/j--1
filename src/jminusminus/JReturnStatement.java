@@ -96,17 +96,18 @@ class JReturnStatement
      * case of a return expression, generate code to load that
      * onto the stack and then generate the appropriate return
      * instruction.
-     * 
+     *
      * @param output
      *                the code emitter (basically an abstraction
      *                for producing the .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (expr == null) {
             output.addNoArgInstruction(RETURN);
         } else {
-            expr.codegen(output);
+            expr.codegen(output, label, jLabelStatement);
             if (expr.type() == Type.INT
                 || expr.type() == Type.BOOLEAN
                 || expr.type() == Type.CHAR) {
@@ -132,4 +133,6 @@ class JReturnStatement
             p.printf("<JReturnStatement line=\"%d\"/>\n", line());
         }
     }
+
+
 }

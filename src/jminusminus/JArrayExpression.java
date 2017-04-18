@@ -78,25 +78,31 @@ class JArrayExpression
      * Perform code generation from the JArrayExpression using
      * the specified code emitter. Generate the code necessary
      * for loading the Rvalue.
-     * 
+     *
      * @param output
      *                the code emitter (basically an abstraction
      *                for producing the .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
-        theArray.codegen(output);
-        indexExpr.codegen(output);
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+        theArray.codegen(output, label, jLabelStatement);
+        indexExpr.codegen(output, label, jLabelStatement);
         if (type == Type.INT) {
             output.addNoArgInstruction(IALOAD);
 	} else if (type == Type.BOOLEAN) {
             output.addNoArgInstruction(BALOAD);
-	} else if (type == Type.CHAR) {
+        } else if (type == Type.DOUBLE) {
+            output.addNoArgInstruction(DALOAD);
+        } else if (type == Type.CHAR) {
             output.addNoArgInstruction(CALOAD);
         } else if (!type.isPrimitive()) {
             output.addNoArgInstruction(AALOAD);
         }
     }
+
+
+
 
     /**
      * Generate the code required for setting up an Lvalue, eg
@@ -107,12 +113,11 @@ class JArrayExpression
      *                the code emitter (basically an abstraction
      *                for producing the .class file).
      */
-
-    public void codegenLoadLhsLvalue(CLEmitter output) {
+    public void codegenLoadLhsLvalue(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Load the lvalue onto the stack: the array and the
         // index.
-        theArray.codegen(output);
-        indexExpr.codegen(output);
+        theArray.codegen(output, label, jLabelStatement);
+        indexExpr.codegen(output, label, jLabelStatement);
     }
 
     /**
@@ -126,7 +131,7 @@ class JArrayExpression
      *                for producing the .class file).
      */
 
-    public void codegenLoadLhsRvalue(CLEmitter output) {
+    public void codegenLoadLhsRvalue(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Load rvalue onto stack, by duplicating the lvalue,
         // and fetching it's content
         if (type == Type.STRING) {
@@ -157,7 +162,7 @@ class JArrayExpression
      *                for producing the .class file).
      */
 
-    public void codegenDuplicateRvalue(CLEmitter output) {
+    public void codegenDuplicateRvalue(CLEmitter output, String label) {
         // It's copied down below the array and index
         output.addNoArgInstruction(DUP_X2);
     }
@@ -175,8 +180,10 @@ class JArrayExpression
 	if (type == Type.INT) {
 	    output.addNoArgInstruction(IASTORE);
 	} else if (type == Type.BOOLEAN) {
-	    output.addNoArgInstruction(BASTORE);
-	} else if (type == Type.CHAR) {
+        output.addNoArgInstruction(BASTORE);
+    } else if (type == Type.DOUBLE) {
+        output.addNoArgInstruction(DASTORE);
+    } else if (type == Type.CHAR) {
 	    output.addNoArgInstruction(CASTORE);
         } else if (!type.isPrimitive()) {
             output.addNoArgInstruction(AASTORE);

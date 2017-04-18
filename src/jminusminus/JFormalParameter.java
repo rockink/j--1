@@ -78,6 +78,12 @@ class JFormalParameter extends JAST {
         return this;
     }
 
+    @Override
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+
+        //TODO NOTIHNG TO DO??
+    }
+
     /**
      * No code generated here.
      * 

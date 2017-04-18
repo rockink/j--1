@@ -32,7 +32,7 @@ public class JInstanceBlock extends JAST implements JMember {
 		return null;
 	}
 
-	public void codegen(CLEmitter output) {
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
 		
 		
 	}

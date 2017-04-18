@@ -61,15 +61,17 @@ abstract class JAST {
         // A dummy -- redefined where necessary.
     }
 
+
     /**
      * Perform code generation for this AST.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public abstract void codegen(CLEmitter output);
+    public abstract void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement);
 
     /**
      * Write the information pertaining to this AST to STDOUT.

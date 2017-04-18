@@ -1,5 +1,7 @@
 package jminusminus;
 
+import static jminusminus.CLConstants.GOTO;
+
 /**The AST of a Label statement */
 
 public class JLabelStatement extends JStatement {
@@ -8,8 +10,12 @@ public class JLabelStatement extends JStatement {
 	protected String labelName;
 	
 	/** Label Statement */
+	/** This is so confusing, I thought the statement would be outside the label Statement */
+	//if this is a case, then just analyse this!
 	protected JStatement statement;
-	
+	protected String outLabel;
+
+
 	/**
 	 * Construct an AST for label statement given the 
 	 * line number, Label Name and label statement
@@ -33,14 +39,12 @@ public class JLabelStatement extends JStatement {
 	@Override
 	public JAST analyze(Context context) {
 		// TODO Auto-generated method stub
-		return null;
+		//not sure what to do here
+		statement.analyze(context);
+		return this;
 	}
 
-	@Override
-	public void codegen(CLEmitter output) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	@Override
 	public void writeToStdOut(PrettyPrinter p) {
@@ -49,6 +53,22 @@ public class JLabelStatement extends JStatement {
          statement.writeToStdOut(p);
          p.indentLeft();
          p.printf("</JLabelStatement>\n");
+	}
+
+	@Override
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
+
+		//codegen here also gens the code of the label!!
+		String outLabel = output.createLabel();
+		this.outLabel = outLabel;
+		System.out.println("creating label " + outLabel + " at line " + statement.line);
+		statement.codegen(output, outLabel, this);
+
+//		output.addBranchInstruction(GOTO, outLabel);
+		//TODO THIS IS EXPERIMENTAL
+		output.addLabel(outLabel);
+
+		System.out.println("generating label done...");
 	}
 
 }

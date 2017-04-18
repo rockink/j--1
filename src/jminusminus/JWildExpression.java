@@ -36,13 +36,14 @@ class JWildExpression extends JExpression {
 
     /**
      * No code generation.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Nothing to do
     }
 

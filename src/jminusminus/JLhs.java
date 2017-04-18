@@ -31,7 +31,7 @@ interface JLhs {
      *            .class file).
      */
 
-    public void codegenLoadLhsLvalue(CLEmitter output);
+    public void codegenLoadLhsLvalue(CLEmitter output, String label, JLabelStatement jLabelStatement);
 
     /**
      * Generate the code required for loading an Rvalue for this variable, as in
@@ -42,7 +42,7 @@ interface JLhs {
      *            .class file).
      */
 
-    public void codegenLoadLhsRvalue(CLEmitter output);
+    public void codegenLoadLhsRvalue(CLEmitter output, String label, JLabelStatement jLabelStatement);
 
     /**
      * Generate the code required for duplicating the Rvalue that is on the
@@ -54,7 +54,7 @@ interface JLhs {
      *            .class file).
      */
 
-    public void codegenDuplicateRvalue(CLEmitter output);
+    public void codegenDuplicateRvalue(CLEmitter output, String label);
 
     /**
      * Generate the code required for doing the actual assignment.

@@ -43,9 +43,9 @@ public class JConditionalOperator extends JExpression {
 	}
 
 	@Override
-	public void codegen(CLEmitter output) {
+	public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

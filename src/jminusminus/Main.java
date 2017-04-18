@@ -2,7 +2,6 @@
 
 package jminusminus;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import static jminusminus.TokenKind.EOF;
 
@@ -143,7 +142,7 @@ public class Main {
         // Generate JVM code
         CLEmitter clEmitter = new CLEmitter(!spimOutput);
         clEmitter.destinationDir(outputDir);
-        ast.codegen(clEmitter);
+        ast.codegen(clEmitter, null, null);
         errorHasOccurred |= clEmitter.errorHasOccurred();
         if (errorHasOccurred) {
             return;

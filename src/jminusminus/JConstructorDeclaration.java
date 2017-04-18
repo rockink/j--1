@@ -137,13 +137,14 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
 
     /**
      * Generate code for the constructor declaration.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         output.addMethod(mods, "<init>", descriptor, null, false);
         if (!invokesConstructor) {
             output.addNoArgInstruction(ALOAD_0);
@@ -154,10 +155,15 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
         // Field initializations
         for (JFieldDeclaration field : definingClass
                 .instanceFieldInitializations()) {
-            field.codegenInitializations(output);
+            field.codegenInitializations(output, label);
         }
+
         // And then the body
-        body.codegen(output);
+        // TODO NOT SURE IF CONSTRUCTOR HAS BREAK STATEMENT
+        body.codegen(output, null, null);
+
+
+
         output.addNoArgInstruction(RETURN);
     }
 

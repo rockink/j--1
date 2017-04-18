@@ -46,6 +46,7 @@ class JMessageExpression extends JExpression {
 
     protected JMessageExpression(int line, JExpression target,
             String messageName, ArrayList<JExpression> arguments) {
+
         this(line, target, null, messageName, arguments);
     }
 
@@ -63,15 +64,16 @@ class JMessageExpression extends JExpression {
      * @param arguments
      *            the arguments.
      */
-
     protected JMessageExpression(int line, JExpression target,
             AmbiguousName ambiguousPart, String messageName,
             ArrayList<JExpression> arguments) {
+
         super(line);
         this.target = target;
         this.ambiguousPart = ambiguousPart;
         this.messageName = messageName;
         this.arguments = arguments;
+
     }
 
     /**
@@ -167,18 +169,20 @@ class JMessageExpression extends JExpression {
      * if this is a statement expression (as marked by a parent
      * JStatementExpression) then we also generate code for popping the stacked
      * value for any non-void invocation.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    //TODO THEY SHOULDN'T HAVE BREAK STATEMENT HERE!!
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         if (!method.isStatic()) {
-            target.codegen(output);
+            target.codegen(output, label, jLabelStatement);
         }
         for (JExpression argument : arguments) {
-            argument.codegen(output);
+            argument.codegen(output, label, jLabelStatement);
         }
         int mnemonic = method.isStatic() ? INVOKESTATIC : target.type()
                 .isInterface() ? INVOKEINTERFACE : INVOKEVIRTUAL;
@@ -205,7 +209,8 @@ class JMessageExpression extends JExpression {
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
         // Push the value
-        codegen(output);
+        //TODO NOT SURE WHY WE DID THIS!!!
+        codegen(output, null, null);
 
         if (onTrue) {
             // Branch on true

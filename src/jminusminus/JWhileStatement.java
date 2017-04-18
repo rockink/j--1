@@ -50,18 +50,24 @@ class JWhileStatement extends JStatement {
         return this;
     }
 
+
+
     /**
      * Generate code for the while loop.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
+     * @param jLabelStatement
      */
 
-    public void codegen(CLEmitter output) {
+    @Override
+    public void codegen(CLEmitter output, String label, JLabelStatement jLabelStatement) {
         // Need two labels
         String test = output.createLabel();
         String out = output.createLabel();
+
+        System.out.println("jWhileStatement "  + line);
 
         // Branch out of the loop on the test condition
         // being false
@@ -69,7 +75,8 @@ class JWhileStatement extends JStatement {
         condition.codegen(output, out, false);
 
         // Codegen body
-        body.codegen(output);
+        body.codegen(output, out, jLabelStatement);
+
 
         // Unconditional jump back up to test
         output.addBranchInstruction(GOTO, test);
